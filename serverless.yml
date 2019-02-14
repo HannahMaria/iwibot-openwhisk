@@ -226,3 +226,27 @@ functions:
         - lib/**/*
         - package.json
         - README.md
+  borrowedBooks:
+    enabled: true
+    relpath: nodejs-borrowedbooks
+    name: borrowedBooks
+    runtime: 'nodejs:8'
+    handler: lib/borrowedBooks.main
+    package:
+      name: IWIBot
+      include:
+        - lib/**/*
+        - package.json
+        - README.md
+  extendDeadlinesOfBooks:
+    enabled: true
+    relpath: nodejs-extenddeadlinesofbooks
+    name: extendDeadlinesOfBooks
+    runtime: 'nodejs:8'
+    handler: lib/extendDeadlinesOfBooks.main
+    package:
+      name: IWIBot
+      include:
+        - lib/**/*
+        - package.json
+        - README.md
