@@ -15,7 +15,7 @@ function main(params) {
 
             if (!error && response.statusCode === 200) {
                 var borrowedBooks = JSON.parse(body);
-                if (borrowedBooks.length === 0) {
+                if (borrowedBooks.length === 0 || borrowedBooks.length === undefined || borrowedBooks === undefined) {
                     responseObject.payload = "Du hast Aktuell keine Bücher ausgeliehen! :)";
                 } else {
                     responseObject.htmlText = "<ul >";
@@ -25,7 +25,8 @@ function main(params) {
                             "Ausleihstatus: " + book.currentStatus + " <br>" +
                             "Übrige Tage: " + book.daysLeft + "<br>" +
                             "Rückgabedatum: " + book.returnDate + "<br>" +
-                            "Buch vorgemerkt: " + book.preregistrationStatus + "</li>";
+                            "Buch vorgemerkt: " + book.preregistrationStatus + "<br>" +
+                            "Signatur: " + book.signature + "</li>";
                         responseObject.language = language;
                     });
                     responseObject.htmlText = responseObject.htmlText + "</ul>";
