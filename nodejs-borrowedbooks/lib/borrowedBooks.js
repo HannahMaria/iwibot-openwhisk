@@ -1,4 +1,5 @@
 var request = require('request');
+const request_promise = require('request-promise');
 
 function main(params) {
     var url = "https://www.iwi.hs-karlsruhe.de/Intranetaccess/REST/library/borrowedbooks";
@@ -6,51 +7,86 @@ function main(params) {
     var responseObject = {};
 
     return new Promise(function (resolve, reject) {
-        request({
-            url: url,
+        const credentials = JSON.parse(params.library_credentials);
+        var bibLogin = {};
+        request_promise({
+            // you get this key string from the key service
+            uri: "https://us-south.functions.cloud.ibm.com/api/v1/web/IWIbot_dev/IWIBot/Keys.json?sid=" + credentials.sid,
             headers: {
-                'Authorization': 'Basic ' + params.context.iwibotCreds
-            }
-        }, function (error, response, body) {
+                'User-Agent': 'Request-Promise'
+            },
+            json: true // Automatically parses the JSON string in the response
+        })
+            .then(rsp => {
+                bibLogin = JSON.parse(decrypt(credentials, rsp.payload.crypto_key));
+                request({
+                    url: url,
+                    headers: {
+                        'Authorization': 'Basic ' + Buffer.from(bibLogin.name + ':' + bibLogin.password).toString('base64'),
+                    }
+                }, function (error, response, body) {
 
-            if (!error && response.statusCode === 200) {
-                var borrowedBooks = JSON.parse(body);
-                if (borrowedBooks.length === 0 || borrowedBooks.length === undefined || borrowedBooks === undefined) {
-                    responseObject.payload = "Du hast Aktuell keine Bücher ausgeliehen! :)";
-                } else {
-                    responseObject.htmlText = "<ul >";
-                    responseObject.payload = "Deine Ausgeliehenen Bücher:";
-                    borrowedBooks.forEach(function (book) {
-                        responseObject.htmlText = responseObject.htmlText + "<li><h3>" + book.bookTitle + "</h3>" +
-                            "Ausleihstatus: " + book.currentStatus + " <br>" +
-                            "Übrige Tage: " + book.daysLeft + "<br>" +
-                            "Rückgabedatum: " + book.returnDate + "<br>" +
-                            "Buch vorgemerkt: " + book.preregistrationStatus + "<br>" +
-                            "Signatur: " + book.signature + "</li>";
-                        responseObject.language = language;
-                    });
-                    responseObject.htmlText = responseObject.htmlText + "</ul>";
-                }
-                resolve(responseObject);
-            } else {
-                console.log('http status code:', (response || {}).statusCode);
-                var payload = "Es ist ein unerwarteter Fehler aufgetreten.";
-                switch (response.statusCode) {
-                    case 500:
-                        payload = "Der QIS-Server ist zurzeit offline.";
-                        break;
-                    case 401:
-                        payload = "Um deine ausgehliehenen Bücher sehen zu können, musst du dich einloggen.";
-                        break;
-                }
-                console.log('error:', error);
-                console.log('body:', body);
-                responseObject.payload = payload;
+                    if (!error && response.statusCode === 200) {
+                        var borrowedBooks = JSON.parse(body);
+                        if (borrowedBooks.length === 0 || borrowedBooks.length === undefined || borrowedBooks === undefined) {
+                            responseObject.payload = "Du hast Aktuell keine Bücher ausgeliehen! :)";
+                        } else {
+                            responseObject.htmlText = "<ul >";
+                            responseObject.payload = "Deine Ausgeliehenen Bücher:";
+                            borrowedBooks.forEach(function (book) {
+                                responseObject.htmlText = responseObject.htmlText + "<li><h3>" + book.bookTitle + "</h3>" +
+                                    "Ausleihstatus: " + book.currentStatus + " <br>" +
+                                    "Übrige Tage: " + book.daysLeft + "<br>" +
+                                    "Rückgabedatum: " + book.returnDate + "<br>" +
+                                    "Buch vorgemerkt: " + book.preregistrationStatus + "<br>" +
+                                    "Signatur: " + book.signature + "</li>";
+                                responseObject.language = language;
+                            });
+                            responseObject.htmlText = responseObject.htmlText + "</ul>";
+                        }
+                        resolve(responseObject);
+                    } else {
+                        console.log('http status code:', (response || {}).statusCode);
+                        var payload = "Es ist ein unerwarteter Fehler aufgetreten.";
+                        switch (response.statusCode) {
+                            case 500:
+                                payload = "Der QIS-Server ist zurzeit offline.";
+                                break;
+                            case 401:
+                                payload = "Um deine ausgehliehenen Bücher sehen zu können, musst du dich einloggen.";
+                                break;
+                        }
+                        console.log('error:', error);
+                        console.log('body:', body);
+                        responseObject.payload = payload;
 
-                resolve(responseObject);
-            }
-        });
+                        resolve(responseObject);
+                    }
+                });
+            })
+            .catch(err => console.log(err));
     });
 }
 
 exports.main = main;
+
+const algorithm = 'aes-256-cbc';
+const crypto = require('crypto');
+
+function decrypt(msg, keystring) {
+    // get iv and ciphertext from msg
+    const iv = Buffer.from(msg.iv, 'hex');
+    const encrypted = Buffer.from(msg.encrypted, 'hex');
+    // use keystring to create a buffer
+    const key = Buffer.from(keystring, 'hex');
+
+    msg.decrypted = {};
+
+    // do decrypt
+    const decipher = crypto.createDecipheriv(algorithm, key, iv);
+    decrypted = decipher.update(encrypted, 'hex', 'utf8');
+    decrypted += decipher.final('utf8');
+
+    console.log("Decrypted " + msg.encrypted + " to " + decrypted + " using key " + keystring);
+    return decrypted;
+}
