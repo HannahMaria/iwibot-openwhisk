@@ -6,7 +6,10 @@ function main(params) {
     var responseObject = {};
 
     return new Promise(function (resolve, reject) {
-            const credentials = JSON.parse(params.library_credentials);
+        //fist login, decrypt library_credentials to bib login
+
+         if (params.library_credentials !== undefined) {
+           const credentials = JSON.parse(params.library_credentials);
             var bibLogin = {};
             request_promise({
                 // you get this key string from the key service
@@ -17,65 +20,98 @@ function main(params) {
                 json: true // Automatically parses the JSON string in the response
             })
                 .then(rsp => {
-                    bibLogin = JSON.parse(decrypt(credentials, rsp.payload.crypto_key));
-                    var booksToExtend = '';
-                    if (params.entities[0]) {
-                        booksToExtend = params.entities[0].value;
-                    } else if (params.input) {
-                        booksToExtend = params.input.text;
-                    }
-                    var postData = [booksToExtend];
-                    var url = url;
-                    var options = {
-                        method: 'put',
-                        body: postData,
-                        json: true,
-                        url: url,
-                        auth: {user: bibLogin.name, password: bibLogin.password}
-                    };
-                    request(options, function (error, response, body) {
-                        if (!error && response.statusCode === 200) {
-                            var extendetBooks = body;
-                            if (extendetBooks.length === 0) {
-                                responseObject.payload = "Es konnten leider keine Bücher verlängert werden. Hast du vielleicht die falsche Signatur mitgegeben? Oder sind sie bereits vorgemerkt?";
-                            } else {
-                                if (booksToExtend.length > extendetBooks.length) {
-                                    responseObject.payload = "Es konnten " + booksToExtend.length - extendetBooks.length + " Bücher nicht verlängert werden. ";
-                                }
-                                responseObject.payload = "Folgende Bücher wurden erfolgreich verlängert:";
-
-                                responseObject.htmlText = "<ul >";
-                                extendetBooks.forEach(function (book) {
-                                    responseObject.htmlText = responseObject.htmlText + "<li><h3>" + book.bookTitle + "</h3>" +
-                                        "Neues Rückgabedatum: " + book.returnDate + "<br>" +
-                                        "Signatur: " + book.signature + "</li>";
-                                    responseObject.language = language;
-                                });
-                                responseObject.htmlText = responseObject.htmlText + "</ul>";
-                            }
-                            resolve(responseObject);
-                        } else {
-                            console.log('http status code:', (response || {}).statusCode);
-                            var payload = "Es ist ein unerwarteter Fehler aufgetreten.";
-                            switch (response.statusCode) {
-                                case 500:
-                                    payload = "Der QIS-Server ist zurzeit offline.";
-                                    break;
-                                case 401:
-                                    payload = "Um deine Bücher verlängern zu können, musst du dich einloggen.";
-                                    break;
-                            }
-                            console.log('error:', error);
-                            console.log('body:', body);
-                            responseObject.payload = body;
-
-                            resolve(responseObject);
-                        }
-                    });
-                })
-                .catch(err => console.log(err));
+        //decrypt successfull, parse credentials and do request to REST-Api
+        bibLogin = JSON.parse(decrypt(credentials, rsp.payload.crypto_key));
+        //before request, check the Userinput. all books or special one?
+        var userInput = '';
+        var booksToExtend = [];
+        if (params.entities) {
+            //all is defines as entity in conversation service. so if the user defines all in the sentence, the entities will be defined
+            userInput = params.entities[0].value;
+            //when the entities undefined -> there have to be some variable user input. Hope the user did it right
+        } else if (params.input) {
+            //told the user to split the seignatuers with an comma
+            if (params.input.text.includes(',')) {
+                booksToExtend = params.input.text.split(',');
+            } else {
+                //is there no comma, then theres only one Signature
+                userInput = params.input.text;
+            }
         }
-    );
+
+        var postData = [userInput];
+        //when there was an comma the array will be > 1 and booksToExtend = postData
+        if (booksToExtend.length > 1) {
+            postData = booksToExtend;
+        }
+        //build the request
+        var options = {
+            method: 'put',
+            body: postData,
+            json: true,
+            url: url,
+            auth: {user: bibLogin.name, password: bibLogin.password}
+        };
+        //do the request
+        request(options, function (error, response, body) {
+            if (!error && response.statusCode === 200) {
+                //request returns all borrowdBooks
+                var allBooks = body;
+                var extendetBooks = [];
+                if (allBooks.length === 0) {
+                    responseObject.payload = "Das hat leider nicht geklappt. Hast du Bücher ausgeliehen?";
+                } else {
+                    //filter the extended Books
+                    if (postData[0] === 'all') {
+                        extendetBooks = allBooks;
+                    } else {
+                        allBooks.forEach(x => {
+                            postData.forEach(y => {
+                                if (x.signature === y) {
+                                    extendetBooks.push(x);
+                                }
+                            })
+                        })
+                    }
+                    responseObject.payload = "Hier deine ausgewählten Bücher (Wenn die Verlängerung nicht geklappt hat ist dein Buch vielleicht schon vorgemerkt):";
+
+                    responseObject.htmlText = "<ul >";
+                    extendetBooks.forEach(function (book) {
+                        responseObject.htmlText = responseObject.htmlText + "<li><h3>" + book.bookTitle + "</h3>" +
+                            "Rückgabedatum: " + book.returnDate + "<br>" +
+                            "Signatur: " + book.signature + "</li>";
+                        responseObject.language = language;
+                    });
+                    responseObject.htmlText = responseObject.htmlText + "</ul>";
+                }
+                resolve(responseObject);
+            } else {
+                console.log('http status code:', (response || {}).statusCode);
+                var payload = "Es ist ein unerwarteter Fehler aufgetreten.";
+                switch (response.statusCode) {
+                    case 500:
+                        payload = "Der QIS-Server ist zurzeit offline.";
+                        break;
+                    case 401:
+                        payload = "Um deine Bücher verlängern zu können, musst du dich einloggen.";
+                        break;
+                }
+                console.log('error:', error);
+                console.log('body:', body);
+                responseObject.payload = body;
+
+                resolve(responseObject);
+            }
+        });
+    })
+    .catch(err => {
+            console.log(err);
+        });
+    } else {
+        responseObject.payload = 'Bitte loggen Sie sich ein.';
+        resolve(responseObject);
+    }
+    });
 }
 
 exports.main = main;
@@ -97,7 +133,5 @@ function decrypt(msg, keystring) {
     const decipher = crypto.createDecipheriv(algorithm, key, iv);
     decrypted = decipher.update(encrypted, 'hex', 'utf8');
     decrypted += decipher.final('utf8');
-
-    console.log("Decrypted " + msg.encrypted + " to " + decrypted + " using key " + keystring);
     return decrypted;
 }

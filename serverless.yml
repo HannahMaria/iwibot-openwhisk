@@ -227,7 +227,7 @@ functions:
         - package.json
         - README.md
   borrowedBooks:
-    enabled: false
+    enabled: true
     relpath: nodejs-borrowedbooks
     name: borrowedBooks
     runtime: 'nodejs:8'
