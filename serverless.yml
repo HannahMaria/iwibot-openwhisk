@@ -67,7 +67,7 @@ functions:
     handler: lib/Router.main
     relpath: nodejs-router
     parameters:
-      workspace_id: c25b831e-b018-474b-8459-c6d8168b9a84
+      workspace_id: a2f68213-7d89-4622-b185-89b4f5ef6cf5
     annotations:
       web-export: true
     bind:
@@ -244,6 +244,18 @@ functions:
     name: extendDeadlinesOfBooks
     runtime: 'nodejs:8'
     handler: lib/extendDeadlinesOfBooks.main
+    package:
+      name: IWIBot
+      include:
+        - lib/**/*
+        - package.json
+        - README.md
+  bibNames:
+    enabled: true
+    relpath: nodejs-bibnames
+    name: bibNames
+    runtime: 'nodejs:8'
+    handler: lib/bibNames.main
     package:
       name: IWIBot
       include:

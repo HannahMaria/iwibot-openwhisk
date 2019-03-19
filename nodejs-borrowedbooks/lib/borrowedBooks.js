@@ -47,8 +47,9 @@ function main(params) {
                                         "Rückgabedatum: " + book.returnDate + "<br>" +
                                         "Buch vorgemerkt: " + book.preregistrationStatus + "<br>" +
                                         "Signatur: " + book.signature + "</li>";
-                                    responseObject.language = language;
+
                                 });
+                                responseObject.language = language;
                                 responseObject.htmlText = responseObject.htmlText + "</ul>";
                             }
                             resolve(responseObject);
@@ -72,7 +73,6 @@ function main(params) {
                     });
                 })
                 .catch(err => {
-                    //when the library_credential is undefined, the user is not logged in
                     console.log(err);
                 });
         } else {

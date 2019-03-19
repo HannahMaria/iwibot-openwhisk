@@ -80,8 +80,9 @@ function main(params) {
                         responseObject.htmlText = responseObject.htmlText + "<li><h3>" + book.bookTitle + "</h3>" +
                             "Rückgabedatum: " + book.returnDate + "<br>" +
                             "Signatur: " + book.signature + "</li>";
-                        responseObject.language = language;
+
                     });
+                    responseObject.language = language;
                     responseObject.htmlText = responseObject.htmlText + "</ul>";
                 }
                 resolve(responseObject);
