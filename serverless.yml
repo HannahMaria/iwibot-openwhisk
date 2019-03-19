@@ -250,6 +250,18 @@ functions:
         - lib/**/*
         - package.json
         - README.md
+  bibInformation:
+    enabled: true
+    relpath: nodejs-bibinformation
+    name: bibInformation
+    runtime: 'nodejs:8'
+    handler: lib/bibInformation.main
+    package:
+      name: IWIBot
+      include:
+        - lib/**/*
+        - package.json
+        - README.md
   bibNames:
     enabled: true
     relpath: nodejs-bibnames

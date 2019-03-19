@@ -1,29 +1,24 @@
 var request = require('request');
 
 function main(params) {
-    var url = "https://www.iwi.hs-karlsruhe.de/Intranetaccess/REST/library/v2/names";
+    var url = "https://www.iwi.hs-karlsruhe.de/Intranetaccess/REST/library/v2/info/";
     var language = "de-DE";
     var responseObject = {};
 
     return new Promise(function (resolve, reject) {
+        const bibname = params.entities[0].value;
         request({
-            url: url,
+            url: url + bibname,
         }, function (error, response, body) {
 
             if (!error && response.statusCode === 200) {
-                var bibNames = JSON.parse(body);
-                responseObject.htmlText = "<ul >";
-                responseObject.payload = "In Karlsruhe gibt es 16 Bibliotkehen:";
-
-                //will be shown as a List
-                bibNames.forEach(function (bib) {
-                    responseObject.htmlText = responseObject.htmlText + "<li><h3>" + bib.id + "</h3>" +
-                        "Name: " + bib.name + "</li>";
-                    responseObject.language = language;
-                });
-                responseObject.htmlText = responseObject.htmlText + "</ul>";
+                var bibInfo = JSON.parse(body).seatestimate;
+                if (bibInfo.length === 0 || bibInfo.length === undefined || bibInfo === undefined) {
+                    responseObject.payload = "Deine Bibliothek konnte leider nicht gefunden werden! :(";
+                } else {
+                    responseObject.payload = "In der Bibliothek sind aktuell " + bibInfo[0].occupiedSeats + " Plätze besetzt und noch " + bibInfo[0].freeSeats + " Plätze frei.";
+                }
                 responseObject.language = language;
-
                 resolve(responseObject);
             } else {
                 //catch errors
