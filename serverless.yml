@@ -226,48 +226,48 @@ functions:
         - lib/**/*
         - package.json
         - README.md
-  borrowedBooks:
+  BorrowedBooks:
     enabled: true
     relpath: nodejs-borrowedbooks
-    name: borrowedBooks
+    name: BorrowedBooks
     runtime: 'nodejs:8'
-    handler: lib/borrowedBooks.main
+    handler: lib/BorrowedBooks.main
     package:
       name: IWIBot
       include:
         - lib/**/*
         - package.json
         - README.md
-  extendDeadlinesOfBooks:
-    enabled: true
+  ExtendDeadlinesOfBooks:
+    enabled: false
     relpath: nodejs-extenddeadlinesofbooks
-    name: extendDeadlinesOfBooks
+    name: ExtendDeadlinesOfBooks
     runtime: 'nodejs:8'
-    handler: lib/extendDeadlinesOfBooks.main
+    handler: lib/ExtendDeadlinesOfBooks.main
     package:
       name: IWIBot
       include:
         - lib/**/*
         - package.json
         - README.md
-  bibInformation:
-    enabled: true
-    relpath: nodejs-bibinformation
-    name: bibInformation
+  LibraryInformation:
+    enabled: false
+    relpath: nodejs-libraryinformation
+    name: LibraryInformation
     runtime: 'nodejs:8'
-    handler: lib/bibInformation.main
+    handler: lib/LibraryInformation.main
     package:
       name: IWIBot
       include:
         - lib/**/*
         - package.json
         - README.md
-  bibNames:
-    enabled: true
-    relpath: nodejs-bibnames
-    name: bibNames
+  LibraryNames:
+    enabled: false
+    relpath: nodejs-librarynames
+    name: LibraryNames
     runtime: 'nodejs:8'
-    handler: lib/bibNames.main
+    handler: lib/LibraryNames.main
     package:
       name: IWIBot
       include:

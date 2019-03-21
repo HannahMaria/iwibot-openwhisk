@@ -11,12 +11,12 @@ function main(params) {
         }, function (error, response, body) {
 
             if (!error && response.statusCode === 200) {
-                var bibNames = JSON.parse(body);
+                var libraryNames = JSON.parse(body);
                 responseObject.htmlText = "<ul >";
                 responseObject.payload = "In Karlsruhe gibt es 16 Bibliotkehen:";
 
                 //will be shown as a List
-                bibNames.forEach(function (bib) {
+                libraryNames.forEach(function (bib) {
                     responseObject.htmlText = responseObject.htmlText + "<li><h3>" + bib.id + "</h3>" +
                         "Name: " + bib.name + "</li>";
                     responseObject.language = language;

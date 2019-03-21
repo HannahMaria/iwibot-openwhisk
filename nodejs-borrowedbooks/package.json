@@ -1,9 +1,9 @@
 {
-  "name": "borrowedBooks",
+  "name": "BorrowedBooks",
   "description": "IWIBot test module",
   "license": "Apache-2.0",
   "version": "1.0.0",
-  "main": "lib/borrowedBooks.js",
+  "main": "lib/BorrowedBooks.js",
   "scripts": {
     "test": "grunt nodeunit"
   },

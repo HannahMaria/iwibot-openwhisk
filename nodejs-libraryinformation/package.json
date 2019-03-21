@@ -1,9 +1,9 @@
 {
-  "name": "bibNames",
+  "name": "LibraryInformation",
   "description": "IWIBot test module",
   "license": "Apache-2.0",
   "version": "1.0.0",
-  "main": "lib/bibNames.js",
+  "main": "lib/LibraryInformation.js",
   "scripts": {
     "test": "grunt nodeunit"
   },

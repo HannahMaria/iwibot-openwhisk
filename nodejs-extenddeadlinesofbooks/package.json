@@ -1,9 +1,9 @@
 {
-  "name": "extendDeadlinesOfBooks",
+  "name": "ExtendDeadlinesOfBooks",
   "description": "IWIBot test module",
   "license": "Apache-2.0",
   "version": "1.0.0",
-  "main": "lib/extendDeadlinesOfBooks.js",
+  "main": "lib/ExtendDeadlinesOfBooks.js",
   "scripts": {
     "test": "grunt nodeunit"
   },
