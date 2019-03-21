@@ -274,3 +274,15 @@ functions:
         - lib/**/*
         - package.json
         - README.md
+  email:
+    enabled: true
+    relpath: nodejs-email
+    name: email
+    runtime: 'nodejs:8'
+    handler: lib/email.main
+    package:
+      name: IWIBot
+      include:
+        - lib/**/*
+        - package.json
+        - README.md
