@@ -60,14 +60,28 @@ functions:
         - lib/**/*
         - package.json
         - README.md
-  Router:
+  AlexaSkill:
     enabled: true
+    name: AlexaSkill
+    runtime: 'nodejs:8'
+    handler: lib/AlexaSkill.main
+    relpath: nodejs-alexaskill
+    parameters:
+      alexa_application_id: amzn1.ask.skill.e89c79b5-dcea-4abf-9b64-8d217735cb98
+    package:
+      name: IWIBot
+      include:
+        - lib/**/*
+        - package.json
+        - README.md
+  Router:
+    enabled: false
     name: Router
     runtime: 'nodejs:8'
     handler: lib/Router.main
     relpath: nodejs-router
     parameters:
-      workspace_id: 4b9aa897-7134-4dbb-9b87-2b4ef6e47fac
+      workspace_id: 84008cbd-11e6-4025-a38e-77c15dc8ccc3
     annotations:
       web-export: true
     bind:

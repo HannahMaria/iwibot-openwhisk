@@ -1,0 +1,14 @@
+{
+  "name": "alexaskill",
+  "description": "Openwhisk action that receives intents and maps them to an action",
+  "license": "Apache-2.0",
+  "version": "1.0.0",
+  "main": "lib/AlexaSkill.js",
+  "scripts": {
+    "test": "grunt nodeunit"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "chai": "^4.2.0"
+  }
+}
