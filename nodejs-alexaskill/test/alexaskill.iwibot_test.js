@@ -4,7 +4,7 @@ let actionUrl = process.env.ACTION_PREFIX_URL + '/alexaskill';
 
 let params = {
     session:{
-    	sessionId:"amzn1.echo-api.session.edde5df3-a4d2-4875-ada7-ca95dec02daf";
+    	sessionId: 'amzn1.echo-api.session.edde5df3-a4d2-4875-ada7-ca95dec02daf'
     }
 }
         
