@@ -1,8 +1,5 @@
 const request = require('request-promise');
 
-
-
-
 async function main(params) {
 	
 	console.log("---------Email Action started!--------");
@@ -77,6 +74,7 @@ function getEmail(mailBoxId, params, mailID){
 		}
 	});	
 }
+
 /**
  * Returns mailbox id that matches the given entity
  * @param mailboxIDs string
@@ -165,11 +163,6 @@ function handleHttpError(error) {
 	return responseObject;
 }
 
-//Code fpr decryption
-const algorithm = 'aes-256-cbc';
-const crypto = require('crypto');
-
-
 function decrypt(msg, keystring) {
     // get iv and ciphertext from msg
     const iv = Buffer.from(msg.iv, 'hex');
@@ -187,7 +180,6 @@ function decrypt(msg, keystring) {
     console.log("Decrypted " + msg.encrypted + " to " + decrypted + " using key " + keystring);
     return decrypted;
 }
-
 
 function getCredentials(params){
 	const credentials = JSON.parse(params.library_credentials);
@@ -208,4 +200,3 @@ function getCredentials(params){
 }
 
 exports.main = main;
-
