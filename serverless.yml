@@ -31,7 +31,7 @@ functions:
     handler: lib/Joke.main
     relpath: nodejs-joke
     package:
-      name: IWIBot
+      name: IWIbot_dev
       include:
         - lib/**/*
         - package.json
@@ -60,6 +60,20 @@ functions:
         - lib/**/*
         - package.json
         - README.md
+  AlexaSkill:
+    enabled: true
+    name: AlexaSkill
+    runtime: 'nodejs:8'
+    handler: lib/AlexaSkill.main
+    relpath: nodejs-alexaskill
+    parameters:
+      alexa_application_id: amzn1.ask.skill.e89c79b5-dcea-4abf-9b64-8d217735cb98
+    package:
+      name: IWIBot
+      include:
+        - lib/**/*
+        - package.json
+        - README.md
   Router:
     enabled: false
     name: Router
@@ -67,7 +81,7 @@ functions:
     handler: lib/Router.main
     relpath: nodejs-router
     parameters:
-      workspace_id: a2f68213-7d89-4622-b185-89b4f5ef6cf5
+      workspace_id: 84008cbd-11e6-4025-a38e-77c15dc8ccc3
     annotations:
       web-export: true
     bind:
@@ -83,7 +97,7 @@ functions:
           responsetype: http
           cors: true
     package:
-      name: IWIBot
+      name: IWIbot_dev
       include:
         - lib/**/*
         - package.json
@@ -280,9 +294,3 @@ functions:
     name: email
     runtime: 'nodejs:8'
     handler: lib/email.main
-    package:
-      name: IWIBot
-      include:
-        - lib/**/*
-        - package.json
-        - README.md
