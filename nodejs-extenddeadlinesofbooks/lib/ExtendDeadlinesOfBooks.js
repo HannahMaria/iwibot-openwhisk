@@ -1,4 +1,7 @@
-var request = require('request');
+const request = require('request');
+const algorithm = 'aes-256-cbc';
+const crypto = require('crypto');
+const request_promise = require('request-promise');
 
 function main(params) {
     var url = "https://www.iwi.hs-karlsruhe.de/Intranetaccess/REST/library/borrowedbooks/deadlines";
@@ -116,10 +119,6 @@ function main(params) {
 }
 
 exports.main = main;
-
-const algorithm = 'aes-256-cbc';
-const crypto = require('crypto');
-const request_promise = require('request-promise');
 
 function decrypt(msg, keystring) {
     // get iv and ciphertext from msg
